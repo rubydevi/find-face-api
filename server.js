@@ -30,7 +30,7 @@ const database = {
 }
 
 app.get('/', (req, res) => {
-  console.log(database.users);;
+  res.send(database.users);;
 });
 
 // Signin endpoint
