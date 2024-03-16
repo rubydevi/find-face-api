@@ -1,9 +1,11 @@
 const express = require('express');
+const bcrypt = require('bcrypt-nodejs');
 
 const app = express(); // create an instance of express
 
 app.use(express.json()); // middleware
 
+// Dummy database
 const database = {
   users: [
     {
@@ -29,6 +31,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+// Signin endpoint
 app.post('/signin', (req, res) => {
   if (req.body.email === database.users[0].email &&
       req.body.password === database.users[0].password)
@@ -41,8 +44,13 @@ app.post('/signin', (req, res) => {
   }
 });
 
+// Register endpoint
 app.post('/register', (req, res) => {
   const { email, name, password} = req.body;
+  bcrypt.hash(password, null, null, function(err, hash) {
+    // Store hash in your password DB.
+    console.log(hash);
+  });
   database.users.push({
     id: '125',
     name: name,
@@ -52,6 +60,36 @@ app.post('/register', (req, res) => {
     joined: new Date()
   });
   res.json(database.users[database.users.length-1]);
+});
+
+// Profile endpoint
+app.get('/profile/:id', (req, res) => {
+  const { id } = req.params;
+  let found = false;
+  database.users.forEach(user => {
+    if (user.id === id) {
+      found = true;
+      return res.json(user);
+    }
+  });
+  if (!found) {
+    res.status(400).json('not found');
+  }
+});
+
+app.put('/image', (req, res) => {
+  const { id } = req.body;
+  let found = false;
+  database.users.forEach(user => {
+    if (user.id === id) {
+      found = true;
+      user.entries++;
+      return res.json(user.entries);
+    }
+  });
+  if (!found) {
+    res.status(400).json('not found');
+  }
 });
 
 app.listen(3000, () => {
