@@ -1,9 +1,11 @@
 const express = require('express');
 const bcrypt = require('bcrypt-nodejs');
+const cors = require('cors');
 
 const app = express(); // create an instance of express
 
 app.use(express.json()); // middleware
+app.use(cors()); // middleware
 
 // Dummy database
 const database = {
@@ -28,7 +30,7 @@ const database = {
 }
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  console.log(database.users);;
 });
 
 // Signin endpoint
